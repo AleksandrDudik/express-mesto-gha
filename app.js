@@ -7,7 +7,6 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -27,7 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 
 app.listen(PORT, () => { console.log(`Слушаем localhost на порту ${PORT}`); });
