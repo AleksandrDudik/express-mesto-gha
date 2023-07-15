@@ -30,8 +30,13 @@ app.use((req, res, next) => {
 app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
 
-app.get('*', (req, res) => {
-  res.status(404).send({ message: 'Ресурс по запросу не найден' });
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500 ? 'На сервере произошла ошибка' : message
+    });
 });
 
 app.listen(PORT, () => { console.log(`Слушаем localhost на порту ${PORT}`); });
