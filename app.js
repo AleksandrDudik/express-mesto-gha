@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const mongoose = require('mongoose');
 
 const bodyParser = require('body-parser');
@@ -22,13 +22,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '600ff43b3a6dbdbd3efb4bdb',
+    _id: '64ac0df224bff2667cba4cf0',
   };
   next();
 });
 
-app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
+app.use('/', usersRoutes);
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Ресурс по запросу не найден' });

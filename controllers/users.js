@@ -1,17 +1,17 @@
 const User = require('../models/user');
 
-const getAllUsers = (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
-    const allUsers = User.find({});
+    const allUsers = await User.find({});
     res.status(200).send(allUsers);
   } catch (err) {
     res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }
 };
 
-const getUserById = (req, res) => {
+const getUserById = async (req, res) => {
   try {
-    const user = User.findById({ _id: req.params.id })
+    const user = await User.findById({ _id: req.params.id })
       .orFail(new Error('NotValidId'));
     res.status(200).send(user);
   } catch (err) {
@@ -26,10 +26,10 @@ const getUserById = (req, res) => {
   }
 };
 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
   const { name, about } = req.body;
   try {
-    const userUpdate = User.findByIdAndUpdate(
+    const userUpdate = await User.findByIdAndUpdate(
       req.user._id,
       {
         name,
@@ -55,10 +55,10 @@ const updateUser = (req, res) => {
   }
 };
 
-const updateUserAvatar = (req, res) => {
+const updateUserAvatar = async (req, res) => {
   const { avatar } = req.body;
   try {
-    const userUpdate = User.findByIdAndUpdate(
+    const userUpdate = await User.findByIdAndUpdate(
       req.user._id,
       { avatar },
       {
@@ -80,10 +80,10 @@ const updateUserAvatar = (req, res) => {
   }
 };
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
   try {
-    const newUser = User.create({ name, about, avatar });
+    const newUser = await User.create({ name, about, avatar });
     res.status(200).send(newUser);
   } catch (err) {
     if (err.name === 'ValidationError') {
