@@ -1,28 +1,28 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: {
     type: String,
-    minlength: 2,
-    maxLength: 30,
     required: true,
+    minlength: [2, 'Слишком короткое имя'],
+    maxlength: [30, 'Слишком длинное имя'],
   },
   about: {
     type: String,
-    minlength: 2,
-    maxLength: 30,
     required: true,
+    minlength: [2, 'Информация о себе должна быть более двух символов'],
+    maxlength: [30, 'Информация о себе должна быть менее 30 символов'],
   },
   avatar: {
     type: String,
-    required: true,
+    required: [true, 'Пользователь должен загрузить аватар'],
     validate: {
       validator(v) {
-        return /https?:\/\/(www\.)?[-a-zA-Z0-9]{2,256}\.[a-z]{1,6}\b([-a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=\S]*)/g.test(v);
+        return /(:?(?:https?:\/\/)?(?:www\.)?)?[-a-z0-9]+\.\w/g.test(v);
       },
-      message: 'Неверный url адрес',
+      message: 'url неверен',
     },
   },
 });
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = model('user', userSchema);
