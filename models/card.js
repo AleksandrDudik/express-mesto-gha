@@ -1,36 +1,35 @@
-const { Schema, model } = require('mongoose');
-const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
 
-const cardSchema = new Schema({
+const cardSchema = new mongoose.Schema({
   name: {
     type: String,
+    minlength: 2,
+    maxlegth: 30,
     required: true,
-    minlength: [2, 'Слишком короткое название карточки'],
-    maxlength: [30, 'Название должно быть менее 30 символов'],
   },
   link: {
     type: String,
-    required: [true, 'Должна присутствовать ссылка на карточку'],
+    required: true,
     validate: {
       validator(v) {
-        return /(:?(?:https?:\/\/)?(?:www\.)?)?[-a-z0-9]+\.\w/g.test(v);
+        return /https?:\/\/(www\.)?[-a-zA-Z0-9]{2,256}\.[a-z]{1,6}\b([-a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=\S]*)/g.test(v);
       },
-      message: 'url неверен',
+      message: 'Неверный url адрес',
     },
   },
   owner: {
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
     required: true,
   },
-  likes: {
-    type: [ObjectId],
-    required: true,
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
     default: [],
-  },
+  }],
   createdAt: {
     type: Date,
-    default: Date.new,
+    default: Date.now,
   },
 });
 
-module.exports = model('card', cardSchema);
+module.exports = mongoose.model('card', cardSchema);
