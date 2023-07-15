@@ -2,7 +2,7 @@ const userSchema = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 
-module.exports.getUsers = (request, response, next) => {
+module.exports.getAllUsers = (request, response, next) => {
   userSchema
     .find({})
     .then((users) => response.send(users))
@@ -28,20 +28,25 @@ module.exports.getUserById = (request, response, next) => {
     });
 };
 
-module.exports.getUser = (request, response, next) => {
-  userSchema.findById(request.user._id)
+module.exports.createUser = (request, response, next) => {
+  const {
+    name,
+    about,
+    avatar,
+  } = request.body;
+
+  userSchema
+    .create({ name, about, avatar })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('User cannot be found');
+        throw new NotFoundError('User cannot be created');
       }
       response.status(200)
         .send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(BadRequestError('Incorrect data'));
-      } else if (err.message === 'NotFound') {
-        next(new NotFoundError('User cannot be found'));
       } else {
         next(err);
       }
@@ -82,7 +87,7 @@ module.exports.updateUser = (request, response, next) => {
     });
 };
 
-module.exports.updateAvatar = (request, response, next) => {
+module.exports.updateUserAvatar = (request, response, next) => {
   const { avatar } = request.body;
 
   userSchema
