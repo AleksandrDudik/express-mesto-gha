@@ -27,7 +27,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cardsRoutes, usersRoutes);
+app.use('/', usersRoutes);
+app.use('/', cardsRoutes);
 
 app.get('*', (req, res) => {
   res.status(404).send({ message: 'Ресурс по запросу не найден' });
