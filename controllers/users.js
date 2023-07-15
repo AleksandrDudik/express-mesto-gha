@@ -1,67 +1,36 @@
-const userSchema = require('../models/user');
-const NotFoundError = require('../errors/NotFoundError');
-const BadRequestError = require('../errors/BadRequestError');
+const User = require('../models/user');
 
-module.exports.getAllUsers = (request, response, next) => {
-  userSchema
-    .find({})
-    .then((users) => response.send(users))
-    .catch(next);
+const getAllUsers = async (req, res) => {
+  try {
+    const allUsers = await User.find({});
+    res.status(200).send(allUsers);
+  } catch (err) {
+    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+  }
 };
 
-module.exports.getUserById = (request, response, next) => {
-  const { userId } = request.params;
-
-  userSchema
-    .findById(userId)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('User cannot be found');
-      }
-      response.send({ data: user });
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Incorrect id'));
-      }
-      return next(err);
-    });
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.params.id })
+      .orFail(new Error('NotValidId'));
+    res.status(200).send(user);
+  } catch (err) {
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'Неверные данные' });
+      return;
+    } if (err.message === 'NotValidId') {
+      res.status(404).send({ message: 'Данные ользователя не найдены' });
+    } else {
+      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+    }
+  }
 };
 
-module.exports.createUser = (request, response, next) => {
-  const {
-    name,
-    about,
-    avatar,
-  } = request.body;
-
-  userSchema
-    .create({ name, about, avatar })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('User cannot be created');
-      }
-      response.status(200)
-        .send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(BadRequestError('Incorrect data'));
-      } else {
-        next(err);
-      }
-    });
-};
-
-module.exports.updateUser = (request, response, next) => {
-  const {
-    name,
-    about,
-  } = request.body;
-
-  userSchema
-    .findByIdAndUpdate(
-      request.user._id,
+const updateUser = async (req, res) => {
+  const { name, about } = req.body;
+  try {
+    const userUpdate = await User.findByIdAndUpdate(
+      req.user._id,
       {
         name,
         about,
@@ -71,41 +40,64 @@ module.exports.updateUser = (request, response, next) => {
         runValidators: true,
       },
     )
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('User cannot be found');
-      }
-      response.status(200)
-        .send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(BadRequestError('Incorrect data'));
-      } else {
-        next(err);
-      }
-    });
+      .orFail(new Error('NotValidId'));
+    res.status(200).send(userUpdate);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send({ message: 'Неверные данные' });
+      return;
+    }
+    if (err.message === 'NotValidId') {
+      res.status(404).send({ message: 'Данные ользователя не найдены' });
+    } else {
+      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+    }
+  }
 };
 
-module.exports.updateUserAvatar = (request, response, next) => {
-  const { avatar } = request.body;
-
-  userSchema
-    .findByIdAndUpdate(
-      request.user._id,
+const updateUserAvatar = async (req, res) => {
+  const { avatar } = req.body;
+  try {
+    const userUpdate = await User.findByIdAndUpdate(
+      req.user._id,
       { avatar },
       {
         new: true,
         runValidators: true,
       },
     )
-    .then((user) => response.status(200)
-      .send(user))
-    .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new BadRequestError('Incorrect data'));
-      } else {
-        next(err);
-      }
-    });
+      .orFail(new Error('NotValidId'));
+    res.status(200).send(userUpdate);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send({ message: 'Неверные данные' });
+      return;
+    } if (err.message === 'NotValidId') {
+      res.status(404).send({ message: 'Данные ользователя не найдены' });
+    } else {
+      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+    }
+  }
+};
+
+const createUser = async (req, res) => {
+  const { name, about, avatar } = req.body;
+  try {
+    const newUser = await User.create({ name, about, avatar });
+    res.status(200).send(newUser);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send({ message: 'Неверные данные' });
+      return;
+    }
+    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+  }
+};
+
+module.exports = {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  updateUserAvatar,
+  createUser,
 };
