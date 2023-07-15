@@ -1,18 +1,18 @@
 const Card = require('../models/card');
 
-const getAllCards = (req, res) => {
+const getAllCards = async (req, res) => {
   try {
-    const allCards = Card.find({});
+    const allCards = await Card.find({});
     res.status(200).send(allCards);
   } catch (err) {
     res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }
 };
 
-const createCard = (req, res) => {
+const createCard = async (req, res) => {
   const { name, link } = req.body;
   try {
-    const cardCreate = Card.create({ name, link, owner: req.user._id });
+    const cardCreate = await Card.create({ name, link, owner: req.user._id });
     res.status(200).send(cardCreate);
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -23,9 +23,9 @@ const createCard = (req, res) => {
   }
 };
 
-const likeCard = (req, res) => {
+const likeCard = async (req, res) => {
   try {
-    const cardLike = Card.findByIdAndUpdate(
+    const cardLike = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
@@ -44,9 +44,9 @@ const likeCard = (req, res) => {
   }
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = async (req, res) => {
   try {
-    const cardDelete = Card.findByIdAndRemove({ _id: req.params.cardId })
+    const cardDelete = await Card.findByIdAndRemove({ _id: req.params.cardId })
       .orFail(new Error('NotValidId'));
     res.status(200).send({ message: `Данные карточки удалили ${cardDelete}` });
   } catch (err) {
@@ -61,9 +61,9 @@ const deleteCard = (req, res) => {
   }
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = async (req, res) => {
   try {
-    const cardDislike = Card.findByIdAndUpdate(
+    const cardDislike = await Card.findByIdAndUpdate(
       req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true },
