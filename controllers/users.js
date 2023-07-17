@@ -11,8 +11,7 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findById({ _id: req.params.id })
-      .orFail(new Error('NotValidId'));
+    const user = await User.findById({ _id: req.params.id });
     res.status(200).send(user);
   } catch (err) {
     if (err.name === 'CastError') {
