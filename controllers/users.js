@@ -39,8 +39,7 @@ const updateUser = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    )
-      .orFail(new Error('NotValidId'));
+    );
     res.status(200).send(userUpdate);
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -65,8 +64,7 @@ const updateUserAvatar = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    )
-      .orFail(new Error('NotValidId'));
+    );
     res.status(200).send(userUpdate);
   } catch (err) {
     if (err.name === 'ValidationError') {
