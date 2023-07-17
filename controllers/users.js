@@ -31,6 +31,20 @@ const getUserById = async (req, res) => {
   }
 };
 
+const createUser = async (req, res) => {
+  const { name, about, avatar } = req.body;
+  try {
+    const newUser = await User.create({ name, about, avatar });
+    res.status(200).send(newUser);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(400).send({ message: 'Неверные данные' });
+      return;
+    }
+    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+  }
+};
+
 const updateUser = async (req, res) => {
   const { name, about } = req.body;
   try {
@@ -82,20 +96,6 @@ const updateUserAvatar = async (req, res) => {
     } else {
       res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
     }
-  }
-};
-
-const createUser = async (req, res) => {
-  const { name, about, avatar } = req.body;
-  try {
-    const newUser = await User.create({ name, about, avatar });
-    res.status(200).send(newUser);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(400).send({ message: 'Неверные данные' });
-      return;
-    }
-    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }
 };
 
