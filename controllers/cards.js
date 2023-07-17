@@ -1,14 +1,5 @@
 const Card = require('../models/card');
 
-const getAllCards = async (req, res) => {
-  try {
-    const allCards = await Card.find({});
-    res.status(200).send(allCards);
-  } catch (err) {
-    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-  }
-};
-
 const createCard = async (req, res) => {
   const { name, link } = req.body;
   try {
@@ -17,7 +8,17 @@ const createCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Неверные данные' });
+      return;
     }
+    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
+  }
+};
+
+const getAllCards = async (req, res) => {
+  try {
+    const allCards = await Card.find({});
+    res.status(200).send(allCards);
+  } catch (err) {
     res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }
 };
@@ -33,6 +34,7 @@ const likeCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
+      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
@@ -44,10 +46,11 @@ const likeCard = async (req, res) => {
 const deleteCard = async (req, res) => {
   try {
     const cardDelete = await Card.findByIdAndRemove({ _id: req.params.cardId });
-    res.status(200).send({ message: `Данные карточки удалили ${cardDelete}` });
+    res.status(200).send({ message: `Данные карточки удалены ${cardDelete}` });
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
+      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
@@ -67,6 +70,7 @@ const dislikeCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
+      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
@@ -76,8 +80,8 @@ const dislikeCard = async (req, res) => {
 };
 
 module.exports = {
-  getAllCards,
   createCard,
+  getAllCards,
   likeCard,
   deleteCard,
   dislikeCard,

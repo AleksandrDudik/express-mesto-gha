@@ -27,11 +27,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', cardsRoutes);
 app.use('/', usersRoutes);
-
-app.get('*', (req, res) => {
-  res.status(404).send({ message: 'Ресурс по запросу не найден' });
-});
+app.use('/', cardsRoutes);
 
 app.listen(PORT, () => { console.log(`Слушаем localhost на порту ${PORT}`); });
