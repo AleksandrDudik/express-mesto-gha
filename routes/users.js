@@ -2,11 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 const {
+  createUser,
   getAllUsers,
   getUserById,
   updateUser,
   updateUserAvatar,
-  createUser,
 } = require('../controllers/users');
 
 router.post('/users', createUser);

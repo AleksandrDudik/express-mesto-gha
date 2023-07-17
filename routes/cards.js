@@ -2,8 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 const {
-  getAllCards,
   createCard,
+  getAllCards,
   likeCard,
   deleteCard,
   dislikeCard,
