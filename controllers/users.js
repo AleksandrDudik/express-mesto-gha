@@ -16,7 +16,6 @@ const getUserById = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные ользователя не найдены' });
     } else {
@@ -43,7 +42,6 @@ const updateUser = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     }
     if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные ользователя не найдены' });
@@ -68,7 +66,6 @@ const updateUserAvatar = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные ользователя не найдены' });
     } else {
@@ -85,7 +82,6 @@ const createUser = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     }
     res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }

@@ -17,7 +17,6 @@ const createCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     }
     res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
   }
@@ -34,7 +33,6 @@ const likeCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
@@ -50,7 +48,6 @@ const deleteCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
@@ -70,7 +67,6 @@ const dislikeCard = async (req, res) => {
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(400).send({ message: 'Неверные данные' });
-      return;
     } if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Данные карточки не найдены' });
     } else {
