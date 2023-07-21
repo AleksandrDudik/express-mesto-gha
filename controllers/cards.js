@@ -29,7 +29,8 @@ const likeCard = async (req, res) => {
       req.params.cardId,
       { $addToSet: { likes: req.user._id } },
       { new: true },
-    );
+    )
+      .orFail(new Error('NotValidId'));
     res.status(200).send(cardLike);
   } catch (err) {
     if (err.name === 'CastError') {
@@ -45,7 +46,8 @@ const likeCard = async (req, res) => {
 
 const deleteCard = async (req, res) => {
   try {
-    const cardDelete = await Card.findByIdAndRemove({ _id: req.params.cardId });
+    const cardDelete = await Card.findByIdAndRemove({ _id: req.params.cardId })
+      .orFail(new Error('NotValidId'));
     res.status(200).send({ message: `Данные карточки удалены ${cardDelete}` });
   } catch (err) {
     if (err.name === 'CastError') {
@@ -65,7 +67,8 @@ const dislikeCard = async (req, res) => {
       req.params.cardId,
       { $pull: { likes: req.user._id } },
       { new: true },
-    );
+    )
+      .orFail(new Error('NotValidId'));
     res.status(200).send(cardDislike);
   } catch (err) {
     if (err.name === 'CastError') {

@@ -25,7 +25,8 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const userById = await User.findById({ _id: req.params.id });
+    const userById = await User.findById({ _id: req.params.id })
+      .orFail(new Error('NotValidId'));
     res.status(200).send(userById);
   } catch (err) {
     if (err.name === 'CastError') {
@@ -52,7 +53,8 @@ const updateUser = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    );
+    )
+      .orFail(new Error('NotValidId'));
     res.status(200).send(userUpdateById);
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -77,7 +79,8 @@ const updateUserAvatar = async (req, res) => {
         new: true,
         runValidators: true,
       },
-    );
+    )
+      .orFail(new Error('NotValidId'));
     res.status(200).send(userAvatarUpdateById);
   } catch (err) {
     if (err.name === 'ValidationError') {
