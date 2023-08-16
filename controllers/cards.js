@@ -1,85 +1,64 @@
 const Card = require('../models/card');
+const BadRequest = require('../errors/BadRequest');
+const NotFound = require('../errors/NotFound');
+const Forbidden = require('../errors/Forbidden');
 
-const createCard = async (req, res) => {
+const createCard = (req, res, next) => {
   const { name, link } = req.body;
-  try {
-    const cardCreate = await Card.create({ name, link, owner: req.user._id });
-    res.status(200).send(cardCreate);
-  } catch (err) {
-    if (err.name === 'ValidationError') {
-      res.status(400).send({ message: 'Неверные данные' });
-      return;
-    }
-    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-  }
+  const owner = req.user._id;
+
+  Card.create({ name, link, owner })
+    .then((card) => res.send(card))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new BadRequest(err.message);
+      }
+    })
+    .catch(next);
 };
 
-const getAllCards = async (req, res) => {
-  try {
-    const allCards = await Card.find({});
-    res.status(200).send(allCards);
-  } catch (err) {
-    res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-  }
+const getAllCards = (req, res, next) => {
+  Card.find({})
+    .then((cards) => res.send({ data: cards }))
+    .catch(next);
 };
 
-const likeCard = async (req, res) => {
-  try {
-    const cardLike = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $addToSet: { likes: req.user._id } },
-      { new: true },
-    )
-      .orFail(new Error('NotValidId'));
-    res.status(200).send(cardLike);
-  } catch (err) {
-    if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Неверные данные' });
-      return;
-    } if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'Данные карточки не найдены' });
-    } else {
-      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-    }
-  }
+const likeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params._id, { $addToSet: { likes: req.user._id } }, { new: true })
+    .orFail(() => {
+      throw new NotFound('Карточка с данным id не найдена');
+    })
+    .then((likes) => res.send({ data: likes }))
+    .catch(next);
 };
 
-const deleteCard = async (req, res) => {
-  try {
-    const cardDelete = await Card.findByIdAndRemove({ _id: req.params.cardId })
-      .orFail(new Error('NotValidId'));
-    res.status(200).send({ message: `Данные карточки удалены ${cardDelete}` });
-  } catch (err) {
-    if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Неверные данные' });
-      return;
-    } if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'Данные карточки не найдены' });
-    } else {
-      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-    }
-  }
+const deleteCard = (req, res, next) => {
+  const userId = req.user._id;
+  const { _id } = req.params;
+
+  Card.findById(_id)
+    .orFail()
+    .catch(() => {
+      throw new NotFound('Карточка с данным id не найдена');
+    })
+    .then((card) => {
+      if (card.owner.toString() === userId) {
+        Card.findByIdAndRemove(_id)
+          .then((datacard) => res.send(datacard));
+      } else {
+        throw new Forbidden('У Вас недостаточно прав доступа');
+      }
+    })
+    .catch(next);
 };
 
-const dislikeCard = async (req, res) => {
-  try {
-    const cardDislike = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      { $pull: { likes: req.user._id } },
-      { new: true },
-    )
-      .orFail(new Error('NotValidId'));
-    res.status(200).send(cardDislike);
-  } catch (err) {
-    if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Неверные данные' });
-      return;
-    } if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'Данные карточки не найдены' });
-    } else {
-      res.status(500).send({ message: `Общая ошибка на сервере: ${err}` });
-    }
-  }
+const dislikeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params._id, { $pull: { likes: req.user._id } }, { new: true })
+    .orFail(() => {
+      throw new NotFound('Карточка с данным id не найдена');
+    })
+    .then((likes) => res.send({ data: likes }))
+    .catch(next);
 };
 
 module.exports = {
