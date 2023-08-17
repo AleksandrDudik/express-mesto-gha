@@ -5,9 +5,8 @@ const method = (value) => {
   const result = validator.isURL(value);
   if (result) {
     return value;
-  } else {
-    throw new Error('Ошибка URL-валидации');
   }
+  throw new Error('Ошибка URL-валидации');
 };
 
 const userValidation = celebrate({
@@ -22,7 +21,7 @@ const userValidation = celebrate({
 
 const idValidation = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().alphanum().length(24).hex(),
+    _id: Joi.string().length(24).hex().required(),
   }),
 });
 

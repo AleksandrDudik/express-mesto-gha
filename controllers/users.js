@@ -1,6 +1,6 @@
-﻿const User = require('../models/user');
-const jwt = require('jsonwebtoken');
+﻿const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const User = require('../models/user');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 const Conflict = require('../errors/Conflict');
@@ -23,21 +23,21 @@ const createUser = (req, res, next) => {
           email,
           password: hash,
         }))
-        .then((user) => res.send({
+        .then((user) => res.status(201).send({
           data: {
             name: user.name,
             about: user.about,
             avatar: user.avatar,
             email: user.email,
           },
-        }));
-    })
-    .catch((err) => {
-      if (err.name === 'MongoError' && err.code === 11000) {
-        throw new Conflict(`Пользователь с данным email: ${email} уже существует`);
-      }
-    })
-    .catch(next);
+        }))
+        .catch((err) => {
+          if (err.name === 'MongoError' && err.code === 11000) {
+            throw new Conflict(`Пользователь с данным email: ${email} уже существует`);
+          }
+          next(err);
+        });
+    });
 };
 
 const getAllUsers = (req, res, next) => {
@@ -68,8 +68,8 @@ const updateUser = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest('Некорректно внесены данные при обновлении профиля');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const updateUserAvatar = (req, res, next) => {
@@ -83,8 +83,8 @@ const updateUserAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest('Переданы некорректные данные при обновлении аватара');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const getCurrentUser = (req, res, next) => {

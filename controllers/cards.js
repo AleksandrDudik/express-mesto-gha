@@ -13,8 +13,8 @@ const createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new BadRequest(err.message);
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const getAllCards = (req, res, next) => {
@@ -43,8 +43,8 @@ const deleteCard = (req, res, next) => {
     })
     .then((card) => {
       if (card.owner.toString() === userId) {
-        Card.findByIdAndRemove(_id)
-          .then((datacard) => res.send(datacard));
+        Card.deleteOne(card)
+          .then((datacard) => res.status(201).send(datacard));
       } else {
         throw new Forbidden('У Вас недостаточно прав доступа');
       }

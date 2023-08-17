@@ -10,7 +10,7 @@ const {
 } = require('../controllers/users');
 const { userAboutValidation, avatarValidation, idValidation } = require('../middlewares/validate');
 
-router.get('/users', idValidation, getCurrentUser);
+router.get('/users/me', getCurrentUser);
 router.get('/users', getAllUsers);
 router.get('/users/:_id', idValidation, getUserById);
 router.patch('/users/me', userAboutValidation, updateUser);
