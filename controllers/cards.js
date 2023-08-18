@@ -1,4 +1,4 @@
-const Card = require('../models/card');
+﻿const Card = require('../models/card');
 const BadRequest = require('../errors/BadRequest');
 const NotFound = require('../errors/NotFound');
 const Forbidden = require('../errors/Forbidden');
@@ -44,7 +44,7 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (card.owner.toString() === userId) {
         Card.deleteOne(card)
-          .then((datacard) => res.status(201).send(datacard));
+          .then((datacard) => res.status(200).send(datacard));
       } else {
         throw new Forbidden('У Вас недостаточно прав доступа');
       }

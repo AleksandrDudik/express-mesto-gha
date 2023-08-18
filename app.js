@@ -27,7 +27,6 @@ const limiter = rateLimit({
 
 app.use(limiter);
 app.use(helmet());
-app.use(errorHandler);
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -47,5 +46,6 @@ app.use('*', () => {
 });
 
 app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => { console.log(`Слушаем localhost на порту ${PORT}`); });
