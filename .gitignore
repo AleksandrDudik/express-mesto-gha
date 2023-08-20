@@ -16,6 +16,3 @@ node_modules
 
 # Logger
 *.log
-
-# key
-.env

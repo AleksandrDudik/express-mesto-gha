@@ -21,8 +21,8 @@ const errorHandler = require('./middlewares/error-handler');
 const app = express();
 
 const allowedCors = [
-  'https://dudik.students.nomoredomains.icu',
-  'https://api.dudik.students.nomoredomains.icu',
+  'https://dudik.nomoredomainsicu.ru',
+  'https://api.dudik.nomoredomainsicu.ru',
   'http://localhost:3001',
 ];
 app.use(cors({
@@ -45,7 +45,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(limiter);
 app.use(helmet());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
@@ -59,7 +58,7 @@ app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
-    throw new Error('Сейчас сервер упадёт');
+    throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
 
@@ -72,6 +71,8 @@ app.use('/', auth, cardsRoutes);
 app.use('*', () => {
   throw new NotFound('Ресурс не найден');
 });
+
+app.use(limiter);
 
 app.use(errorLogger);
 
