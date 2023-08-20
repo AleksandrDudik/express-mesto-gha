@@ -1,9 +1,20 @@
-[![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
+[![Статус тестов](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
+
 # Проект Mesto фронтенд + бэкенд
 
-1. # **Проектная работа №14 студента Дудика А.В. на тему "Место"**
-----
-2. ## Данный проект создан для реализации обучения по программе веб-разработки на Яндекс Практикуме. Он реализован с помощью EXPRESS и MongoDB.
-На даном этапе создан backend проекта "Место" с регистрацией и авторизацией.
+# **Проектная работа №15 студента Дудика А.В. на тему "Место"**
 
-* [Ссылка на проект в GitHub Pages](https://aleksandrdudik.github.io/express-mesto-gha/)
+# react-mesto-api-full
+Репозиторий для приложения проекта `Mesto`, включающий фронтенд и бэкенд части приложения со следующими возможностями: авторизации и регистрации пользователей, операции с карточками и пользователями. Бэкенд расположен в директории `backend/`, а фронтенд - в `frontend/`. 
+  
+Ссылка на сайт, размещенный на Яндекс.Облаке - 
+
+Адрес репозитория: https://aleksandrdudik.github.io/react-mesto-api-full-gha/
+
+## Ссылки на проект
+
+IP-адрес 158.160.27.24
+
+Frontend https://dudik.nomoredomainsicu.ru
+
+Backend https://api.dudik.nomoredomainsicu.ru
