@@ -23,11 +23,25 @@ const app = express();
 const allowedCors = [
   'https://dudik.nomoredomainsicu.ru',
   'https://api.dudik.nomoredomainsicu.ru',
+  'https://localhost:3001',
+  'https://localhost:3000',
+  'http://dudik.nomoredomainsicu.ru',
+  'http://api.dudik.nomoredomainsicu.ru',
   'http://localhost:3001',
+  'http://localhost:3000',
 ];
-app.use(cors({
-  origin: allowedCors,
-}));
+const corsOptions = {
+  origin(origin, callback) {
+    if (allowedCors.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 const NotFound = require('./errors/NotFound');
 
