@@ -22,26 +22,15 @@ const app = express();
 
 const allowedCors = [
   'https://dudik.nomoredomainsicu.ru',
-  'https://api.dudik.nomoredomainsicu.ru',
   'https://localhost:3001',
   'https://localhost:3000',
   'http://dudik.nomoredomainsicu.ru',
-  'http://api.dudik.nomoredomainsicu.ru',
   'http://localhost:3001',
   'http://localhost:3000',
 ];
-const corsOptions = {
-  origin(origin, callback) {
-    if (allowedCors.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: allowedCors,
+}));
 
 const NotFound = require('./errors/NotFound');
 
@@ -50,13 +39,6 @@ const { PORT = 3000 } = process.env;
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-});
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  next();
 });
 
 app.use(helmet());
